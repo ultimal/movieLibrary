@@ -33,53 +33,6 @@ public:
     explicit moviedb(QObject *parent = 0);
 
     /**
-     * @brief Open the database, create one if it doesn't exist. This function looks
-     * for the database in the home path (same for linux/unix/windows), if it finds
-     * the database, it opens it otherwise it sets newDB to true and create an empty
-     * database. See the moviedb() constructor for details on table verification and
-     * creation.
-     * @return It returns true if the database is opened / created successfully. It returns
-     * false if there are errors. Errors can be accessed using the lastError() function.
-     * @see lastError()
-     */
-    bool openDB();
-
-    /**
-     * @brief Close the database. This function closes the connection to the open
-     * database. Useful only when application is about to close.
-     * @return It returns true if the database is closed successfully.  It returns
-     * false if there are errors. Errors can be accessed using the lastError() function.
-     * @see lastError()
-     */
-    bool closeDB();
-
-    /**
-     * @brief Delete the database. This function will delete the existing database mostly
-     * used to refresh the database or during uninstall.
-     * @return It returns true if the database was deleted successfully. It returns
-     * false if there are errors. Errors can be accessed using the lastError() function.
-     * @see lastError()
-     */
-    bool deleteDB();
-
-    /**
-     * @brief Helper function to verify if a table exists. This function uses the QSQLDatabase
-     * function to look for the existence of a table.
-     * @param tableName Name of the table to look for.
-     * @return It returns true if the table exists and false if it doesn't exist.  It also returns
-     * false if there are errors. Errors can be accessed using the lastError() function.
-     * @see lastError()
-     */
-    bool tableExists(QString tableName);
-
-    /**
-     * @brief SQL Errors from previous operation. This function returns any errors that might
-     * have occured when a SQL operation was executed on the database.
-     * @return It returns a QSQLError object with all the details on the error.
-     */
-    QSqlError lastError();
-
-    /**
      * @brief Add a movie to the database. Use this method to create records in the database.
      * This method creates in theater movies and on hard drive movie data in the database.
      * @param id Movie ID returned by the api.
@@ -116,7 +69,7 @@ public:
      * @param character
      * @return
      */
-    bool addCase (QString id, QString name, QString character);
+    bool addCast (QString id, QString name, QString character);
 
 
 signals:
@@ -124,28 +77,7 @@ signals:
 public slots:
     
 private:
-    QSqlDatabase db;    ///< Database adapter.
-    QString dbPath;     ///< Path to the database.
-    bool newDB;         ///< Tracks if database is being populated for the first time.
 
-    /**
-     * @brief Query creates the movies table. The following fields are created: id, title, year,
-     * mpaa_rating, runtime, critics_concensus, critics_rating, critics_score, audience_rating,
-     * audience_score, synopsis, thumbnail, profile, theaters, dvd, filename, source, list_date
-     */
-    extern const QString create_movies_table;
-    extern const QString create_cast_table;     ///< Query creates the cast table with following fields: id, name, character
-
-    /**
-     * @brief Query deletes all the in theater movies. This allows for new data to be loaded to
-     * the table.
-     */
-    extern const QString delete_intheater_records;
-
-    /**
-     * @brief Query deletes all records in the tables. This allows for rescans and data refresh.
-     */
-    extern const QString delete_all_records;
 };
 
 #endif // MOVIEDB_H

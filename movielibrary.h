@@ -14,6 +14,7 @@
 #include "qobjecthelper.h"
 #include "serializer.h"
 #include "serializerrunnable.h"
+#include "rottentomatoes.h"
 #include <QMultimedia>
 
 namespace Ui {
@@ -23,6 +24,7 @@ namespace Ui {
 class movieLibrary : public QWidget
 {
     Q_OBJECT
+    QThread rottenTomatoesThread;
 
 public:
     explicit movieLibrary(QWidget *parent = 0);
@@ -42,9 +44,14 @@ public:
     void setStatus (int statusNumber, QString status);
 
     ~movieLibrary();
+signals:
+    void lookForInTheater();
+    void lookForMovie(QString movieName);
 
 public slots:
     void finishedReply(QNetworkReply *pReply);
+    void processInTheater(QList<QStringList> inTheaterResult);
+    void processMovie(QStringList movieResult);
 
 private:
     Ui::movieLibrary *ui;
@@ -66,7 +73,7 @@ private:
     QString downloadSpeed;
     QString uploadSpeed;
 
-
+    rottenTomatoes *rtapi;
 };
 
 #endif // MOVIELIBRARY_H

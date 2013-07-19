@@ -10,9 +10,8 @@ movieLibrary::movieLibrary(QWidget *parent) :
     ui->frmWhatisthis->hide();
     ui->frmMovieInfo->hide();
 
-    m_manager = new QNetworkAccessManager(this);
-
-    connect (m_manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(finishedReply(QNetworkReply*)));
+    // m_manager = new QNetworkAccessManager(this);
+    // connect (m_manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(finishedReply(QNetworkReply*)));
 
     // Setup table widget
     QStringList columnLabels;
@@ -37,10 +36,17 @@ movieLibrary::movieLibrary(QWidget *parent) :
 
     // fetchMovieMDB("Transformers");
     // fetchMovieRT ("Transformers");
-    scanFolders("C:/data/Media/Movies");
+    // scanFolders("C:/data/Media/Movies");
     // cineCurrentPage = 1;
     // fetchCineRT();
 
+    // Setup In Theaters Lookup Thread
+    rtInTheaters = new rottenTomatoes(this);
+    rtapi->moveToThread(&rottenTomatoesThread);
+    connect (rottenTomatoesThread,&QThread::finished,rtapi, &QObject::deleteLater);
+    connect (this, &movieLibrary::lookForInTheater(), rtapi, &rtapi::getInTheater());
+    connect (rtapi, SIGNAL(finishedInTheater(QList<QStringList>)), this, SLOT(processInTheater(QList<QStringList>)));
+    rottenTomatoesThread.start();
 }
 
 void movieLibrary::setStatus (int statusNumber, QString status) {
@@ -112,14 +118,11 @@ void movieLibrary::fetchMovieMDB(QString movie) {
 
 void movieLibrary::fetchMovieRT(QString movie) {
     // TODO: Get movie information from RT
-    movie = "";
+
 }
 
 void movieLibrary::fetchCineRT() {
-    QString qry = QString("http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apikey=hyzk5vrtsy6ne8a6tut98e9t&page_limit=50&page=%1").arg(cineCurrentPage);
 
-    qDebug() << qry;
-    m_manager->get(QNetworkRequest(QUrl(qry)));
 }
 
 void movieLibrary::finishedReply(QNetworkReply *pReply) {

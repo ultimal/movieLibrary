@@ -20,15 +20,18 @@ SOURCES += main.cpp\
     rottentomatoes.cpp \
     twitter.cpp \
     moviedb.cpp \
-    piratebay.cpp
+    piratebay.cpp \
+    logger.cpp
 
 HEADERS  += movielibrary.h \
     rottentomatoes.h \
     twitter.h \
     moviedb.h \
-    piratebay.h
+    piratebay.h \
+    logger.h
 
-FORMS    += movielibrary.ui
+FORMS    += movielibrary.ui \
+    logger.ui
 
 RESOURCES += \
     resources.qrc

@@ -14,12 +14,20 @@
 class rottenTomatoes : public QObject
 {
     Q_OBJECT
-
+    QThread rottenTomatoesThread;
 public:
-    explicit rottenTomatoes(QObject *parent = 0);
+    /**
+     * @brief rottenTomatoes
+     * @param parent
+     * @param searchMode In Theater (false) or Movie Search (true)
+     */
+    explicit rottenTomatoes(QObject *parent = 0, bool searchMode = false);
     
 signals:
-    
+    void finishedInTheater ();
+    void finishedMovie ();
+    void inTheaterResultsAvailable(QVariantMap result);
+    void movieResultsAvailable(QVariantMap result);
 
 public slots:
     /**
@@ -31,12 +39,20 @@ public slots:
      * request.
      */
     void finishedReply (QNetworkReply *pReply);
+    void getInTheater();
+    void getMovie(QString movieName);
 
 private:
     QString inTheatersQuery;    ///< Query string to be used with the in theaters query
     QString movieQuery;         ///< Query string to be used with specific movie query
-    QNetworkRequest req;        ///< Network request object to POST / GET queries
-
+    QNetworkAccessManager m_manager;
+    int inTheatersTotal;
+    int movieTotal;
+    int inTheatersCurrentPage;
+    int movieCurrentPage;
+    QString movieNameSearch;
+    bool doneWithResults;
+    bool inTheaterMode;
 };
 
 #endif // ROTTENTOMATOES_H
