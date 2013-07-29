@@ -40,13 +40,15 @@ movieLibrary::movieLibrary(QWidget *parent) :
     // cineCurrentPage = 1;
     // fetchCineRT();
 
-    // Setup In Theaters Lookup Thread
+    // Setup "In Theaters" Lookup Thread
     rtInTheaters = new rottenTomatoes(this);
     rtapi->moveToThread(&rottenTomatoesThread);
     connect (rottenTomatoesThread,&QThread::finished,rtapi, &QObject::deleteLater);
     connect (this, &movieLibrary::lookForInTheater(), rtapi, &rtapi::getInTheater());
     connect (rtapi, SIGNAL(finishedInTheater(QList<QStringList>)), this, SLOT(processInTheater(QList<QStringList>)));
     rottenTomatoesThread.start();
+
+
 }
 
 void movieLibrary::setStatus (int statusNumber, QString status) {
